@@ -4,9 +4,17 @@ Typing practice in your terminal. Like [monkeytype](https://monkeytype.com), but
 
 ## Install
 
+**Homebrew** (macOS/Linux):
+
 ```
 brew tap William-Ger/typer
 brew install typer
+```
+
+**pip**:
+
+```
+pip install typer-cli-tool
 ```
 
 Then just run:
@@ -44,12 +52,6 @@ typer -t 15 -d easy # quick easy warmup
 - Personal stats: best WPM, streaks, per-difficulty averages, sparkline
 - User profiles stored locally at `~/.config/typer/`
 - Passive update check — shows update command if a new version is available
-
-## Install from source
-
-```
-pip install .
-```
 
 ## Update
 

@@ -36,13 +36,16 @@ pyproject.toml     # package metadata, version, entry point
 
 ## Install Methods
 
-Users install one of two ways:
+Users install one of three ways:
 1. **Homebrew**: `brew tap William-Ger/typer && brew install typer`
-2. **pip (from source)**: `pip install .` or `pip install typer-cli-tool`
+2. **pip (from PyPI)**: `pip install typer-cli-tool`
+3. **pipx (recommended for CLI tools)**: `pipx install typer-cli-tool`
 
 Update commands:
 - Homebrew: `brew update && brew upgrade typer` (must include `brew update` to refresh the tap)
-- pip: `pip install --upgrade typer-cli-tool`
+- pip/pipx: `pip install --upgrade typer-cli-tool`
+
+The package is published on PyPI as `typer-cli-tool`.
 
 ## Release Process
 
@@ -74,7 +77,15 @@ When releasing a new version:
      # Then PUT the updated content
      ```
 
-All 5 steps are required. If you skip step 5, `brew upgrade typer` won't pick up the new version.
+6. **Publish to PyPI**:
+   ```
+   ~/.local/bin/pyproject-build
+   ~/.local/bin/twine upload dist/*
+   ```
+   Username is `__token__`, password is the PyPI API token.
+   Clean old builds first if needed: `rm -rf dist/`
+
+All 6 steps are required. If you skip step 5, `brew upgrade typer` won't pick up the new version. If you skip step 6, `pip install --upgrade typer-cli-tool` won't pick it up.
 
 ## Design Principles
 
@@ -92,4 +103,4 @@ No test suite currently. To test manually, run `typer` and verify:
 - Typing starts the timer
 - Results screen shows after time runs out
 - `s` opens stats screen
-- `tab` restarts, `esc` quits
+- `tab` restarts/home, `ctrl+q` quits
