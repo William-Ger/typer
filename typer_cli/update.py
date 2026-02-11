@@ -1,10 +1,9 @@
-"""Auto-update checker — hits GitHub releases API, caches daily."""
+"""Passive update checker — hits GitHub releases API, caches daily."""
 
 import json
 import os
+import sys
 import time
-import subprocess
-import shutil
 from urllib.request import urlopen, Request
 from urllib.error import URLError
 
@@ -44,7 +43,6 @@ def _fetch_latest():
 
 
 def _parse_version(v):
-    """Parse '0.1.0' into tuple (0, 1, 0) for comparison."""
     try:
         return tuple(int(x) for x in v.split("."))
     except (ValueError, AttributeError):
@@ -55,60 +53,53 @@ def _is_newer(latest, current):
     return _parse_version(latest) > _parse_version(current)
 
 
-def check_for_update():
-    """Check for updates. Returns (latest_version, needs_update) or (None, False)."""
-    cache = _read_cache()
-    last_check = cache.get("last_check", 0)
-    cached_latest = cache.get("latest_version")
-
-    # only hit the API once per day
-    if time.time() - last_check < CHECK_INTERVAL and cached_latest:
-        if _is_newer(cached_latest, __version__):
-            return cached_latest, True
-        return None, False
-
-    latest = _fetch_latest()
-    if latest:
-        _write_cache({"last_check": time.time(), "latest_version": latest})
-        if _is_newer(latest, __version__):
-            return latest, True
-
-    return None, False
+def detect_install_method():
+    """Detect how typer was installed. Returns 'brew' or 'pip'."""
+    exe = sys.executable or ""
+    if "/Cellar/" in exe or "/homebrew/" in exe or "/linuxbrew/" in exe:
+        return "brew"
+    return "pip"
 
 
-def prompt_update():
-    """Check for updates and prompt the user. Call before entering curses."""
+def get_update_info():
+    """Check for updates (cached daily).
+
+    Returns dict with:
+        version: current version string
+        latest: latest version string or None
+        update_available: bool
+        install_method: 'brew' or 'pip'
+        update_cmd: shell command to update
+    """
+    info = {
+        "version": __version__,
+        "latest": None,
+        "update_available": False,
+        "install_method": detect_install_method(),
+        "update_cmd": "",
+    }
+
     try:
-        latest, needs_update = check_for_update()
-    except Exception:
-        return  # never let update check crash the app
+        cache = _read_cache()
+        last_check = cache.get("last_check", 0)
+        cached_latest = cache.get("latest_version")
 
-    if not needs_update:
-        return
-
-    print(f"\n  typer v{latest} is available (you have v{__version__})")
-
-    has_brew = shutil.which("brew") is not None
-    if has_brew:
-        try:
-            answer = input("  update now? [y/n] ").strip().lower()
-        except (EOFError, KeyboardInterrupt):
-            print()
-            return
-
-        if answer in ("y", "yes"):
-            print("  updating...")
-            result = subprocess.run(
-                ["brew", "upgrade", "typer"],
-                capture_output=True, text=True,
-            )
-            if result.returncode == 0:
-                print("  updated! restart typer to use the new version.")
-                raise SystemExit(0)
-            else:
-                print(f"  brew upgrade failed: {result.stderr.strip()}")
-                print("  continuing with current version...\n")
+        if time.time() - last_check < CHECK_INTERVAL and cached_latest:
+            latest = cached_latest
         else:
-            print()
+            latest = _fetch_latest()
+            if latest:
+                _write_cache({"last_check": time.time(), "latest_version": latest})
+
+        if latest and _is_newer(latest, __version__):
+            info["latest"] = latest
+            info["update_available"] = True
+    except Exception:
+        pass
+
+    if info["install_method"] == "brew":
+        info["update_cmd"] = "brew upgrade typer"
     else:
-        print(f"  run: pip install --upgrade typer-cli-tool\n")
+        info["update_cmd"] = "pip install --upgrade typer-cli-tool"
+
+    return info

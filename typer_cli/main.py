@@ -4,6 +4,7 @@ import argparse
 import sys
 
 from typer_cli.sentences import generate
+from typer_cli.update import get_update_info
 from typer_cli.profile import (
     profile_exists, read_profile, create_profile, append_test,
     post_race_stats,
@@ -227,7 +228,7 @@ def draw_text(scr, lines, typed, target, sy, sx, aw, sh):
 
 # ── main test loop ───────────────────────────────────────────────────────────
 
-def test(scr, ti, di):
+def test(scr, ti, di, update_info=None):
     curses.curs_set(0)
     scr.nodelay(True)
     scr.timeout(50)
@@ -290,7 +291,13 @@ def test(scr, ti, di):
             putc(scr, timer_y, w, f"{tlimit}s", C_ACCENT, curses.A_BOLD)
             draw_text(scr, lines, typed, target, text_y, tx, aw, h)
             putc(scr, hint_y, w, "start typing...", C_DIM)
+            if update_info and update_info["update_available"]:
+                notice = f"v{update_info['latest']} available: {update_info['update_cmd']}"
+                putc(scr, h - 2, w, notice, C_DIM)
             putc(scr, h - 1, w, "s stats   tab new words   esc quit", C_HINT)
+            ver = f"v{update_info['version']}" if update_info else ""
+            if ver:
+                put(scr, h - 1, 1, ver, C_DIM)
             if user_name:
                 put(scr, h - 1, w - len(user_name) - 1, user_name, C_DIM)
         else:
@@ -704,11 +711,13 @@ def run(scr, args):
         else:
             create_profile("")
 
+    update_info = get_update_info()
+
     ti = TIMES.index(args.time) if args.time and args.time in TIMES else 1
     di = DIFFS.index(args.diff) if args.diff and args.diff in DIFFS else 1
 
     while True:
-        result, ti, di = test(scr, ti, di)
+        result, ti, di = test(scr, ti, di, update_info)
 
         if result is None:
             return
@@ -740,13 +749,7 @@ def entry():
     parser.add_argument("-d", "--diff", type=str, metavar="LEVEL",
                         choices=["easy", "medium", "hard"],
                         help="difficulty (easy, medium, hard)")
-    parser.add_argument("--skip-update-check", action="store_true",
-                        help="skip the update check on startup")
     args = parser.parse_args()
-
-    if not args.skip_update_check:
-        from typer_cli.update import prompt_update
-        prompt_update()
 
     try:
         curses.wrapper(lambda scr: run(scr, args))
