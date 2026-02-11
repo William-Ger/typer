@@ -406,13 +406,11 @@ def name_prompt(scr, existing=""):
         y += 2
 
         name_str = "".join(buf)
-        fx = cx(w, MAX_LEN + 4)
-        put(scr, y, fx, ">", C_ACCENT, curses.A_BOLD)
-        put(scr, y, fx + 2, name_str, C_TITLE)
-        try:
-            scr.move(y, fx + 2 + len(name_str))
-        except curses.error:
-            pass
+        input_display = "> " + name_str
+        ix = cx(w, len(input_display) + 1)
+        put(scr, y, ix, ">", C_ACCENT, curses.A_BOLD)
+        put(scr, y, ix + 2, name_str, C_TITLE)
+        cursor_y, cursor_x = y, ix + 2 + len(name_str)
 
         y += 2
         if existing:
@@ -420,6 +418,11 @@ def name_prompt(scr, existing=""):
         else:
             putc(scr, y, w, "enter to confirm", C_HINT)
 
+        # move cursor after all drawing so addstr doesn't override it
+        try:
+            scr.move(cursor_y, cursor_x)
+        except curses.error:
+            pass
         scr.refresh()
 
         k = scr.getch()

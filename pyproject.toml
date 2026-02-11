@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "typer-cli-tool"
-version = "0.3.1"
+version = "0.3.2"
 description = "Typing practice in your terminal. Like monkeytype, but in the CLI."
 readme = "README.md"
 license = "MIT"
