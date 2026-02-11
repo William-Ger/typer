@@ -3,7 +3,7 @@ requires = ["setuptools>=64"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "typecli"
+name = "typer-cli-tool"
 version = "0.1.0"
 description = "Typing practice in your terminal. Like monkeytype, but in the CLI."
 readme = "README.md"
@@ -18,10 +18,10 @@ classifiers = [
 ]
 
 [tool.setuptools.packages.find]
-include = ["typecli*"]
+include = ["typer_cli*"]
 
 [project.scripts]
-typer = "typecli.main:entry"
+typer = "typer_cli.main:entry"
 
 [project.urls]
 Homepage = "https://github.com/William-Ger/typer"

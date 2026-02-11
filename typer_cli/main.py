@@ -3,7 +3,7 @@ import time
 import argparse
 import sys
 
-from typecli.sentences import generate
+from typer_cli.sentences import generate
 
 # ── colors ───────────────────────────────────────────────────────────────────
 

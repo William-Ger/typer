@@ -1,7 +1,7 @@
 """Template grammar sentence generator."""
 
 import random
-from typecli.words import get_pools
+from typer_cli.words import get_pools
 
 
 # ── slot filler ──────────────────────────────────────────────────────────────
