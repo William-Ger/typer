@@ -2,8 +2,10 @@
 
 Typing practice in your terminal. Like [monkeytype](https://monkeytype.com), but in the CLI.
 
+## Install
+
 ```
-brew tap willgerstung/typecli
+brew tap William-Ger/typer
 brew install typer
 ```
 
@@ -16,19 +18,23 @@ typer
 ## Usage
 
 ```
-typer              # interactive mode menu
+typer              # 30s medium (default)
 typer -t 15        # 15 second test
 typer -t 60        # 60 second test
-typer -w 25        # 25 word test
+typer -d hard      # hard difficulty
+typer -t 15 -d easy # quick easy warmup
 ```
 
 ## Controls
 
-| Key       | Action        |
-|-----------|---------------|
-| `tab`     | restart test  |
-| `esc`     | back to menu  |
-| `q`       | quit (results)|
+| Key       | Action              |
+|-----------|---------------------|
+| `tab`     | restart test        |
+| `esc`     | quit                |
+| `←` `→`  | change time         |
+| `↑` `↓`  | change difficulty   |
+| `click`   | click time/difficulty|
+| `q`       | quit (results)      |
 
 ## Install from source
 

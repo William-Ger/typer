@@ -24,4 +24,4 @@ include = ["typecli*"]
 typer = "typecli.main:entry"
 
 [project.urls]
-Homepage = "https://github.com/willgerstung/typecli"
+Homepage = "https://github.com/William-Ger/typer"
