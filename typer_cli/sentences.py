@@ -23,7 +23,10 @@ class _Filler:
         pool = self._pools.get(cat)
         if not pool:
             raise KeyError(f"unknown category: {cat}")
-        val = random.choice(pool)
+        # avoid words already picked in this sentence for the same category
+        used = {v for k, v in self._cache.items() if k.rstrip("0123456789") == cat}
+        remaining = [w for w in pool if w not in used]
+        val = random.choice(remaining if remaining else pool)
         self._cache[key] = val
         return val
 
@@ -90,6 +93,42 @@ EASY_TEMPLATES = [
     "The {nouns1} {v_past1} while the {noun1} {v_past2}.",
     "A {noun1} {v_past1} over the {adj1} {noun2}.",
     "He gave {name1} a {adj1} {noun1}.",
+    # ── expanded ──
+    "The {noun1} near the {noun2} was {adj1}.",
+    "{name1} never liked the {adj1} {noun1}.",
+    "We saw a {adj1} {noun1} on the {noun2}.",
+    "The {adj1} {noun1} broke the {noun2}.",
+    "{name1} wore a {adj1} {noun1} and a {adj2} {noun2}.",
+    "A {noun1} rolled down the {adj1} {noun2}.",
+    "The {nouns1} hid {prep1} the {adj1} {noun1}.",
+    "She could hear the {noun1} {prep1} the {noun2}.",
+    "A {adj1} {noun1} lay {prep1} the {noun2}.",
+    "{name1} {v_past1} the {noun1} {adv1}.",
+    "The {noun1} grew {adj1} in the {noun2}.",
+    "Two {nouns1} {v_past1} the {adj1} {noun1}.",
+    "He put the {noun1} {prep1} the {adj1} {noun2}.",
+    "There were {adj1} {nouns1} in the {noun1}.",
+    "The {noun1} beside the {noun2} was {adj1} and {adj2}.",
+    "{name1} gave the {adj1} {noun1} to {name2}.",
+    "What {adj1} {nouns1} they were!",
+    "She {v_past1} a {noun1} from the {adj1} {noun2}.",
+    "They left the {adj1} {noun1} {prep1} the {noun2}.",
+    "{name1} set the {noun1} {prep1} the {noun2}.",
+    "The {adj1} {noun1} {v_past1} above the {nouns1}.",
+    "Only the {adj1} {noun1} was left.",
+    "I {v_past1} {name1} a {adj1} {noun1}.",
+    "A {adj1} {noun1} and a {adj2} {noun2} were {prep1} the {noun3}.",
+    "The {noun1} {v_past1}, and so did the {noun2}.",
+    "{name1} {v_past1} past the {adj1} {noun1}.",
+    "No {noun1} could {v_base1} the {adj1} {noun2}.",
+    "He ran {prep1} the {adj1} {noun1} and the {noun2}.",
+    "She thought the {noun1} was {adj1}.",
+    "{name1} held a {adj1} {noun1} in each hand.",
+    "The {noun1} {v_past1} across the {adj1} {noun2}.",
+    "Both {nouns1} were {adj1} that {time1}.",
+    "I {v_past1} the {adj1} {noun1} for {name1}.",
+    "The {noun1} smelled {adj1} and {adj2}.",
+    "Most of the {nouns1} {v_past1} {adv1}.",
 ]
 
 MEDIUM_TEMPLATES = [
@@ -152,6 +191,42 @@ MEDIUM_TEMPLATES = [
     "The {noun1} {v_past1} the {adj1} {noun2}, and soon the {nouns1} {v_past2} as well.",
     "{time1}, a {adj1} {noun1} {v_past1} {prep1} the {noun2} and {v_past2} everything.",
     "Would the {adj1} {noun1} ever {v_base1} again, or had it {v_past1} for the last time?",
+    # ── expanded ──
+    "{name1} {v_past1} the {noun1}, and then the {adj1} {noun2} began to {v_base1}.",
+    "The {adj1} {noun1} could barely {v_base1} as the {noun2} {v_past1} {prep1} the {noun3}.",
+    "Once inside the {noun1}, {name1} {v_past1} the {adj1} {noun2} {adv1}.",
+    "Although the {nouns1} {v_past1}, {name1} still {v_past2} the {adj1} {noun1}.",
+    "Somewhere near the {noun1}, a {adj1} {noun2} {v_past1} in the {noun3}.",
+    "The {adj1} {noun1} seemed to {v_base1} whenever the {noun2} {v_past1}.",
+    "Long before the {noun1} {v_past1}, the {adj1} {nouns1} had begun to {v_base1}.",
+    "{name1} could see that the {adj1} {noun1} had {v_past1} the {noun2}.",
+    "The {noun1} was {adj1}, yet the {nouns1} {v_past1} {prep1} it {adv1}.",
+    "Had {name1} not {v_past1}, the {adj1} {noun1} would have {v_past2}.",
+    "It was the {adj1} {noun1} that {v_past1} {name1} the most.",
+    "Where the {noun1} once {v_past1}, the {adj1} {noun2} now {v_past2}.",
+    "The {nouns1} {v_past1} {adv1}; the {noun1} barely {v_past2} at all.",
+    "{name1} wondered whether the {adj1} {noun1} would ever {v_base1} the {noun2}.",
+    "Below the {adj1} {noun1}, a {noun2} {v_past1} {prep1} the {noun3}.",
+    "Not a single {noun1} {v_past1} when the {adj1} {noun2} {v_past2}.",
+    "She often {v_past1} {prep1} the {noun1}, {v_ing1} the {adj1} {nouns1}.",
+    "He realized the {adj1} {noun1} was {adv1} more {adj2} than the {noun2}.",
+    "After {v_ing1} the {noun1}, {name1} {adv1} {v_past1} toward the {adj1} {noun2}.",
+    "{time1}, the {adj1} {noun1} and the {noun2} {v_past1} without a {noun3}.",
+    "Perhaps the {adj1} {noun1} had always {v_past1}; perhaps the {noun2} never {v_past2}.",
+    "Even {name1} could not {v_base1} the {adj1} {noun1} that {v_past1} {prep1} the {noun2}.",
+    "The more the {noun1} {v_past1}, the more {adj1} the {noun2} became.",
+    "Between the {noun1} and the {noun2}, a {adj1} {noun3} {v_past1} {adv1}.",
+    "{name1} left the {adj1} {noun1} and {v_past1} {prep1} the {noun2}.",
+    "For as long as the {noun1} {v_past1}, the {adj1} {nouns1} would {v_base1}.",
+    "It was clear that the {noun1} had {adv1} {v_past1} the {adj1} {noun2}.",
+    "The {adj1} {noun1} above the {noun2} {v_past1}, {v_ing1} everything below.",
+    "{name1} {v_past1} the {noun1} so {adv1} that the {adj1} {noun2} {v_past2}.",
+    "All the {nouns1} that {v_past1} were {adj1}, but the {noun1} was not.",
+    "What if the {adj1} {noun1} had never {v_past1} the {noun2}?",
+    "They {v_past1} the {adj1} {noun1} while the {noun2} {v_past2} {prep1} them.",
+    "Until {name1} {v_past1}, no one knew the {noun1} was {adj1}.",
+    "As the {adj1} {noun1} {v_past1}, the {nouns1} grew {adj2} and {adj3}.",
+    "She wanted to {v_base1} the {noun1}, but the {adj1} {noun2} {v_past1}.",
 ]
 
 HARD_TEMPLATES = [
@@ -212,6 +287,32 @@ HARD_TEMPLATES = [
     "The {noun1}, {adj1} though it was, had {v_past1} the {adj2} {noun2}; {name1} {v_past2} that nothing {prep1} the {noun3} would ever {v_base1} again.",
     "Such was the {adj1} {noun1} that {v_past1} {prep1} the {noun2} that even {name1}, who had {adv1} {v_past2}, could not {v_base1} its {adj2} {noun3}.",
     "While the {adj1} {noun1} {v_past1} and the {nouns1} {v_past2} {adv1}, {name1} {v_past3} the {adj2} {noun2}, {v_ing1} that the {noun3} would soon {v_base1}.",
+    # ── expanded ──
+    "The {adj1} {noun1} that had {v_past1} {prep1} the {noun2} was now {adv1} {v_ing1}; {name1} {v_past2} that the {adj2} {noun3} could no longer {v_base1}.",
+    "{name1}, having {adv1} {v_past1} the {adj1} {noun1}, {v_past2} {prep1} the {noun2} and {v_past3} the {adj2} {noun3} that {v_past4} {prep2} the {noun4}.",
+    "It was not until the {adj1} {noun1} {v_past1} that {name1} {v_past2} how {adv1} the {noun2} had {v_past3} the {adj2} {noun3}.",
+    "The {nouns1}, {adv1} {v_ing1} {prep1} the {adj1} {noun1}, could neither {v_base1} the {noun2} nor {v_base2} the {adj2} {noun3} that {v_past1} {prep2} the {noun4}.",
+    "Between the {adj1} {noun1} and the {adj2} {noun2}, {name1} {v_past1} a {noun3} so {adj3} that even the {nouns1} {v_past2} {adv1}.",
+    "Had the {adj1} {noun1} not {v_past1} so {adv1}, the {noun2} might never have {v_past2}; instead, the {adj2} {noun3} {v_past3} {prep1} the {noun4}.",
+    "What {name1} {v_past1} {prep1} the {adj1} {noun1} was neither {adj2} nor {adj3}; it was the {noun2} itself, {v_ing1} {adv1} {prep2} the {noun3}.",
+    "The {noun1}, {adj1} and {adj2}, {v_past1} {adv1} while the {nouns1} {v_past2}; {name1}, meanwhile, {v_past3} the {adj3} {noun2} {prep1} the {noun3}.",
+    "Though {name1} had {v_past1} the {adj1} {noun1} many times, never before had the {noun2} {v_past2} so {adv1}, as though the {adj2} {noun3} itself had {v_past3}.",
+    "Across the {adj1} {noun1}, where the {nouns1} once {v_past1} {adv1}, there now {v_past2} a {adj2} {noun2}, {v_ing1} the {noun3} with {adj3} {noun4}.",
+    "{name1} {v_past1} {adv1} that the {adj1} {noun1}, having {v_past2} the {noun2}, would never again {v_base1} the {adj2} {noun3} that {v_past3} {prep1} the {noun4}.",
+    "Within the {adj1} {noun1} there {v_past1} a {noun2} of such {adj2} {noun3} that {name1}, who had {v_past2} many {nouns1}, {v_past3} in {adj3} {noun4}.",
+    "The {adj1} {noun1} {v_past1} {prep1} the {noun2}, and the {adj2} {noun3} {v_past2}; yet neither {name1} nor the {nouns1} could {v_base1} what had {v_past3}.",
+    "If the {adj1} {noun1} were to {v_base1} the {noun2}, then the {adj2} {nouns1} would {v_base2} {adv1}; this was what {name1} had {v_past1} all along.",
+    "Not only had the {adj1} {noun1} {v_past1} the {noun2} {adv1}, but it had also {v_past2} every {adj2} {noun3} {prep1} the {noun4}.",
+    "The {noun1} {v_past1} as though it had {v_past2} the {adj1} {noun2}; {name1}, {v_ing1} {prep1} the {noun3}, could barely {v_base1} the {adj2} {noun4}.",
+    "Every {noun1} that {v_past1} {prep1} the {adj1} {noun2} seemed to {v_base1} {adv1}, as if the {adj2} {noun3} had {v_past2} them all.",
+    "From the {adj1} {noun1} to the {adj2} {noun2}, the {nouns1} {v_past1} {adv1}, {v_ing1} each {noun3} they {v_past2} along the {noun4}.",
+    "{name1} could not {v_base1} whether the {adj1} {noun1} had {v_past1} or {v_past2}; either way, the {adj2} {noun2} {v_past3} {adv1} {prep1} the {noun3}.",
+    "So {adv1} did the {adj1} {noun1} {v_base1} that the {nouns1}, which had been {v_ing1} {prep1} the {noun2}, {v_past1} without a sound.",
+    "Where once the {adj1} {noun1} had {v_past1} {adv1}, there was now only the {adj2} {noun2}, {v_ing1} {prep1} the {adj3} {noun3}.",
+    "The {adj1} {noun1}, the {adj2} {noun2}, and the {adj3} {noun3} all {v_past1} {prep1} one another; {name1} could only {v_base1} and {v_base2}.",
+    "Whoever had {v_past1} the {adj1} {noun1} must have {v_past2} that the {noun2} would {v_base1}; otherwise, the {adj2} {noun3} would never have {v_past3}.",
+    "As the {adj1} {noun1} {v_past1} {prep1} the {noun2}, {name1} {v_past2}, {v_ing1} the {adj2} {nouns1} that {v_past3} {adv1} in the {noun3}.",
+    "Long after the {adj1} {noun1} had {v_past1}, the {noun2} continued to {v_base1} {adv1}, as if the {adj2} {noun3} still {v_past2} {prep1} the {noun4}.",
 ]
 
 TEMPLATES = {
@@ -230,8 +331,18 @@ def generate(count=80, difficulty="medium"):
     sentences = []
     total_words = 0
 
+    # shuffle templates and cycle through to avoid back-to-back repeats
+    deck = list(templates)
+    random.shuffle(deck)
+    idx = 0
+
     while total_words < count:
-        tmpl = random.choice(templates)
+        if idx >= len(deck):
+            # reshuffle when exhausted
+            random.shuffle(deck)
+            idx = 0
+        tmpl = deck[idx]
+        idx += 1
         filler = _Filler(pools)
         sentence = tmpl.format_map(filler)
         sentences.append(sentence)
