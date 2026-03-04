@@ -720,6 +720,8 @@ def show_stats(scr):
 
         # bottom hint
         putc(scr, h - 1, w, "n change name   esc back", C_HINT)
+        coffee = "☕ buymeacoffee.com/willgerstuz"
+        put(scr, h - 1, w - len(coffee) - 1, coffee, C_DIM)
         scr.refresh()
 
         k = scr.getch()
